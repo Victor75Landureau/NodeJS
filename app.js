@@ -9,7 +9,19 @@ var express = require('express');
 // Chargement de la page index.html
 app.get('/', function (req, res) {
   res.sendFile(__dirname + '/views/home.html');
-});
+})
+.get('/home', function (req, res) {
+  res.sendFile(__dirname + '/views/home.html');
+})
+.get('/news', function (req, res) {
+  res.sendFile(__dirname + '/views/news.html');
+})
+.get('/contact', function (req, res) {
+  res.sendFile(__dirname + '/views/contact.html');
+})
+.get('/about', function (req, res) {
+  res.sendFile(__dirname + '/views/about.html');
+})
 
 app.use(express.static(path.join(__dirname, 'public')))
 
