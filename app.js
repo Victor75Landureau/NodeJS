@@ -1,14 +1,12 @@
-var app  = require('express')();
-var server = require('http').createServer(app);
-var io = require('socket.io').listen(server);
-var fs = require('fs');
-var ent = require('ent'); // permet de bloquer les caractères HTML
+// var server = require('http').createServer(app);
+// var io = require('socket.io').listen(server);
+// var fs = require('fs');
+// var ent = require('ent'); // permet de bloquer les caractères HTML
 var path = require('path');
 var express = require('express');
-
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
-var exphbs = require('handlebars');
+var exphbs = require('express-handlebars');
 var expressValidator = require('express-validator');
 var flash = require('connect-flash');
 var session = require('express-session');
@@ -19,57 +17,75 @@ var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/loginapp');
 var db = mongoose.connection;
 
+var routes  = require('./routes/index');
+var users = require('./routes/users');
 
+//Init App
+var app  = express();
 
-// Chargement de la page index.html
-app.get('/', function (req, res) {
-  res.sendFile(__dirname + '/views/home.html');
+//View engine
+app.set('views', path.join(__dirname, 'views'));
+app.engine('handlebars', exphbs({defaultLayout: 'layout'}));
+app.set('view engine', 'handlebars');
+
+//BodyParser middleware
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended:false }));
+app.use(cookieParser());
+
+//Static folder
+app.use(express.static(path.join(__dirname, 'public')));
+
+//Express session
+//https://www.npmjs.com/package/express-session
+app.use(session({
+    secret: 'QK34SQ56GGFHD65',
+    //might change
+    saveUninitialized: true,
+    resave: true
+}));
+
+//Passport authenticate
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Express Validator
+//https://github.com/ctavan/express-validator ==> Middleware Option
+app.use(expressValidator({
+  errorFormatter: function(param, msg, value) {
+      var namespace = param.split('.')
+      , root    = namespace.shift()
+      , formParam = root;
+
+    while(namespace.length) {
+      formParam += '[' + namespace.shift() + ']';
+    }
+    return {
+      param : formParam,
+      msg   : msg,
+      value : value
+    };
+  }
+}));
+
+//Connect flash
+app.use(flash());
+
+//Global vars
+app.use(function (req, res, next){
+  res.locals.success_msg = req.flash('success_msg');
+  res.locals.error_msg = req.flash('error_msg');
+  res.locals.error = req.flash('error');
+  next();
 })
-.get('/home', function (req, res) {
-  res.sendFile(__dirname + '/views/home.html');
-})
-.get('/news', function (req, res) {
-  res.sendFile(__dirname + '/views/news.html');
-})
-.get('/contact', function (req, res) {
-  res.sendFile(__dirname + '/views/contact.html');
-})
-.get('/about', function (req, res) {
-  res.sendFile(__dirname + '/views/about.html');
-})
-.get('/login', function (req, res) {
-  res.sendFile(__dirname + '/views/login.html');
-})
 
-app.use(express.static(path.join(__dirname, 'public')))
+app.use('/', routes);
+app.use('/users', users);
 
-//Login Authentification
-// app.post('/login',
-//   passport.authenticate('local'),
-//   function(req, res) {
-//     // If this function gets called, authentication was successful.
-//     // `req.user` contains the authenticated user.
-//     res.redirect('/users/' + req.user.username);
-//   });
+//Set port
+app.set('port', (process.env.PORT || 3000));
 
-//chargement du server
-var io = require('socket.io').listen(server);
-
-// Quand un client se connecte, on le note dans la console
-// io.sockets.on('connection', function (socket) {
-//
-//     socket.on('petit_nouveau', function(pseudo) {
-//     socket.pseudo = pseudo;
-//     console.log('Connection de ' + socket.pseudo);
-//     });
-//
-//     //Message commun
-//     socket.broadcast.emit('message', socket.pseudo + ' vient de se connecter !');
-//
-//     // Quand le serveur reçoit un signal de type "message" du client
-//     socket.on('message', function (message) {
-//         console.log(socket.pseudo + ' a ecrit : ' + message);
-//     });
-// });
-
-server.listen(8080);
+app.listen(app.get('port'), function(){
+  console.log('Server started on port' + app.get('port'));
+})
+//server.listen(8080);
