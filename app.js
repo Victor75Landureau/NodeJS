@@ -6,6 +6,21 @@ var ent = require('ent'); // permet de bloquer les caractères HTML
 var path = require('path');
 var express = require('express');
 
+var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
+var exphbs = require('handlebars');
+var expressValidator = require('express-validator');
+var flash = require('connect-flash');
+var session = require('express-session');
+var passport = require('passport');
+var LocalStrategy = require('passport-local'),Strategy;
+var mongo = require('mongo');
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost/loginapp');
+var db = mongoose.connection;
+
+
+
 // Chargement de la page index.html
 app.get('/', function (req, res) {
   res.sendFile(__dirname + '/views/home.html');
@@ -22,8 +37,20 @@ app.get('/', function (req, res) {
 .get('/about', function (req, res) {
   res.sendFile(__dirname + '/views/about.html');
 })
+.get('/login', function (req, res) {
+  res.sendFile(__dirname + '/views/login.html');
+})
 
 app.use(express.static(path.join(__dirname, 'public')))
+
+//Login Authentification
+// app.post('/login',
+//   passport.authenticate('local'),
+//   function(req, res) {
+//     // If this function gets called, authentication was successful.
+//     // `req.user` contains the authenticated user.
+//     res.redirect('/users/' + req.user.username);
+//   });
 
 //chargement du server
 var io = require('socket.io').listen(server);
