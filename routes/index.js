@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 var Video = require('../models/video');
+var User = require('../models/user');
 
 // Get Homepage
 // router.get('/', ensureAuthenticated, function(req, res){
@@ -15,7 +16,8 @@ router.get('/video', function(req, res){
 });
 
 //Add Video
-router.post('/video', function(req, res){
+router.post('/video', function(req, res, username){
+	// var video_user = User.username;
 	var video_title = req.body.video_title;
 	var video_link = req.body.video_link;
 
@@ -29,6 +31,7 @@ router.post('/video', function(req, res){
 		res.render('video');
 	}else {
 		var newVideo = new Video({
+			// username: User.getUserByUsername(),
 			video_title:video_title,
 			video_link:video_link
 		});
@@ -48,6 +51,7 @@ router.post('/video', function(req, res){
 router.get('/contact', function(req, res){
 	res.render('contact');
 });
+
 // function ensureAuthenticated(req, res, next){
 // 	if(req.isAuthenticated()){
 // 		return next();
