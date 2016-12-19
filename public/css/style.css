@@ -2,6 +2,9 @@
 body {
   padding-top: 20px;
   padding-bottom: 20px;
+  color:black;
+  background-color:white;
+  /*background-image:url(/images/monster.png);*/
 }
 
 /* Everything but the jumbotron gets side spacing for mobile first views */
