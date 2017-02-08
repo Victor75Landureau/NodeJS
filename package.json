@@ -20,6 +20,6 @@
     "passport-http": "^0.3.0",
     "passport-local": "^1.0.0"
   },
-  "author": "Mateo21 <mateo21@email.com>",
-  "description": "Un gestionnaire de todolist ultra basique"
+  "author": "Victor",
+  "description": "NodeJS"
 }

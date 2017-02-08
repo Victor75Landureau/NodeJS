@@ -12,8 +12,6 @@
         <nav>
           <ul class="nav nav-pills pull-left">
             <li role="presentation"><a href="/">Dashboard</a></li>
-            <li role="presentation"><a href="/video">Video</a></li>
-            <li role="presentation"><a href="/contact">Contact us</a></li>
           </ul>
           <ul class="nav nav-pills pull-right">
             {{#if user}}
@@ -26,7 +24,7 @@
         </nav>
       </div>
 
-      <div class="row">
+    <div class="row">
         <div class="col-lg-12">
           {{#if success_msg}}
             <div class="alert alert-success">{{success_msg}}</div>
@@ -36,16 +34,14 @@
             <div class="alert alert-danger">{{error_msg}}</div>
           {{/if}}
 
-          {{#if errors}}
+          {{#if error}}
             <div class="alert alert-danger">{{error}}</div>
           {{/if}}
+          
           {{{body}}}
-      </div>
     </div>
 
-      <footer class="footer">
-        <p>&copy; 2016 loginapp, Inc. Author Victor Landureau</p>
-      </footer>
+    </div>
 
     </div> <!-- /container -->
   </body>
